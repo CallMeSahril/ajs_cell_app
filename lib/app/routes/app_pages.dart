@@ -1,7 +1,5 @@
 import 'package:get/get.dart';
 
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
 import '../modules/auth/loading/bindings/loading_binding.dart';
 import '../modules/auth/loading/views/loading_view.dart';
 import '../modules/auth/login/bindings/login_binding.dart';
@@ -12,6 +10,10 @@ import '../modules/auth/splash/bindings/splash_binding.dart';
 import '../modules/auth/splash/views/splash_view.dart';
 import '../modules/auth/welcome/bindings/welcome_binding.dart';
 import '../modules/auth/welcome/views/welcome_view.dart';
+import '../modules/home/bindings/home_binding.dart';
+import '../modules/home/views/home_view.dart';
+import '../modules/home/screen/katagori/detail_katagori/bindings/detail_katagori_binding.dart';
+import '../modules/home/screen/katagori/detail_katagori/views/list_detail_katagori_view.dart';
 
 part 'app_routes.dart';
 
@@ -50,6 +52,11 @@ class AppPages {
       name: _Paths.SPLASH,
       page: () => const SplashView(),
       binding: SplashBinding(),
+    ),
+    GetPage(
+      name: _Paths.VOCHER,
+      page: () => const ListDetailKatagoriView(),
+      binding: DetailKatagoriBinding(),
     ),
   ];
 }

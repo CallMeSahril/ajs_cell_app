@@ -1,12 +1,20 @@
+import 'package:ajs_cell_app/app/routes/app_pages.dart';
 import 'package:ajs_cell_app/app/widgets/button/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class KatagoryPage extends StatelessWidget {
+  const KatagoryPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Katagori",style: TextStyle(color: Color(0xff0245A3),fontWeight: FontWeight.bold),),
+          title: Text(
+            "Katagori",
+            style: TextStyle(
+                color: Color(0xff0245A3), fontWeight: FontWeight.bold),
+          ),
         ),
         body: ListView(
           children: [
@@ -18,22 +26,37 @@ class KatagoryPage extends StatelessWidget {
                   CustomButton(
                     type: ButtonType.blue,
                     text: "Voucher",
+                    onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
+                      'title': 'Voucher',
+                    }),
                   ),
                   CustomButton(
                     type: ButtonType.blue,
                     text: "Kartu",
+                    onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
+                      'title': 'Kartu',
+                    }),
                   ),
                   CustomButton(
                     type: ButtonType.blue,
                     text: "Aksesoris",
+                    onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
+                      'title': 'Aksesoris',
+                    }),
                   ),
                   CustomButton(
                     type: ButtonType.blue,
                     text: "Perlengkapan Hp",
+                    onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
+                      'title': 'Perlengkapan Hp',
+                    }),
                   ),
                   CustomButton(
                     type: ButtonType.blue,
                     text: "Bibit Parfum",
+                    onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
+                      'title': 'Bibit Parfum',
+                    }),
                   ),
                 ],
               ),
