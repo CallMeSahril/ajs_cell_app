@@ -1,23 +1,26 @@
+import 'package:ajs_cell_app/app/core/config/token.dart';
+import 'package:ajs_cell_app/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 
 class SplashController extends GetxController {
-  //TODO: Implement SplashController
-
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
+    _checkToken();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  Future<void> _checkToken () async {
+    await Future.delayed(const Duration(seconds: 3));
+    final hasToken = await getToken();
+    if (hasToken) {
+      Get.offAllNamed(Routes.LOADING);
+    } else {
+      Get.offAllNamed(Routes.LOGIN);
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
+  Future<bool> getToken() async {
+    final token = await AuthHelper.getToken();
+    return token != null;
   }
-
-  void increment() => count.value++;
 }

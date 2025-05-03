@@ -54,9 +54,11 @@ class LoginView extends GetView<LoginController> {
                 children: [
                   CustomTextFormField(
                     title: 'Email',
+                    controller: controller.emailController,
                   ),
                   CustomTextFormField(
                     title: 'Password',
+                    controller: controller.passwordController,
                   ),
                 ],
               ),
@@ -69,7 +71,8 @@ class LoginView extends GetView<LoginController> {
         child: CustomButton(
           type: ButtonType.blue,
           text: "LOGIN",
-          onTap: () => Get.offAllNamed(Routes.LOADING),
+          // onTap: () => Get.offAllNamed(Routes.LOADING),
+          onTap: () => controller.login(),
         ),
       ),
     );

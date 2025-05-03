@@ -1,3 +1,5 @@
+import 'package:ajs_cell_app/app/modules/auth/register/bindings/auth_binding.dart';
+import 'package:ajs_cell_app/app/modules/home/bindings/profile_binding.dart';
 import 'package:get/get.dart';
 
 import '../modules/auth/loading/bindings/loading_binding.dart';
@@ -26,7 +28,7 @@ class AppPages {
     GetPage(
       name: _Paths.HOME,
       page: () => const HomeView(),
-      binding: HomeBinding(),
+      bindings: [AuthBinding(), HomeBinding(), ProfileBinding()],
     ),
     GetPage(
       name: _Paths.LOADING,
@@ -38,19 +40,17 @@ class AppPages {
       page: () => const WelcomeView(),
       binding: WelcomeBinding(),
     ),
-    GetPage(
-      name: _Paths.LOGIN,
-      page: () => const LoginView(),
-      binding: LoginBinding(),
-    ),
-    GetPage(
-      name: _Paths.REGISTER,
-      page: () => const RegisterView(),
-      binding: RegisterBinding(),
-    ),
+    GetPage(name: _Paths.LOGIN, page: () => const LoginView(), bindings: [
+      AuthBinding(),
+      LoginBinding(),
+    ]),
+    GetPage(name: _Paths.REGISTER, page: () => const RegisterView(), bindings: [
+      AuthBinding(),
+      RegisterBinding(),
+    ]),
     GetPage(
       name: _Paths.SPLASH,
-      page: () => const SplashView(),
+      page: () => SplashView(),
       binding: SplashBinding(),
     ),
     GetPage(

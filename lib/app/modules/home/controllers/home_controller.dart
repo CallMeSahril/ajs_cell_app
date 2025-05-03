@@ -14,7 +14,7 @@ class HomeController extends GetxController {
   }
 
   final List<Widget> pages = [
-    BerandaPage(),
+    // BerandaPage(),
     KatagoryPage(),
     KeranjangPage(),
     PesanPage(),

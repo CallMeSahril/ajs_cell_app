@@ -46,18 +46,23 @@ class RegisterView extends GetView<RegisterController> {
               children: [
                 CustomTextFormField(
                   title: 'Nama Lengkap',
+                  controller: controller.nameController,
                 ),
                 CustomTextFormField(
                   title: 'Nama Telepon',
+                  controller: controller.phoneController,
                 ),
                 CustomTextFormField(
                   title: 'Email',
+                  controller: controller.emailController,
                 ),
                 CustomTextFormField(
                   title: 'Password',
+                  controller: controller.passwordController,
                 ),
                 CustomTextFormField(
                   title: 'Alamat',
+                  controller: controller.addressController,
                 ),
               ],
             ),
@@ -66,7 +71,13 @@ class RegisterView extends GetView<RegisterController> {
       ),
       bottomNavigationBar: BottomAppBar(
         color: Color(0xffFFFFFF),
-        child: CustomButton(type: ButtonType.blue, text: "DAFTAR"),
+        child: CustomButton(
+          type: ButtonType.blue,
+          text: "DAFTAR",
+          onTap: () {
+            controller.register();
+          },
+        ),
       ),
     );
   }

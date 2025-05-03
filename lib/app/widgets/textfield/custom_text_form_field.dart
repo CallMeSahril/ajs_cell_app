@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String title;
+  final TextEditingController? controller;
+  final bool readOnly;
   const CustomTextFormField({
     super.key,
     required this.title,
+    this.controller,
+    this.readOnly = false,
   });
 
   @override
@@ -17,6 +21,8 @@ class CustomTextFormField extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w400, color: Colors.black),
         ),
         TextFormField(
+          controller: controller,
+          readOnly: readOnly,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
