@@ -17,11 +17,11 @@ class HomeView extends GetView<HomeController> {
                 unselectedItemColor: Colors.grey,
                 items: [
                   BottomNavigationBarItem(icon: Icon(Icons.home), label: "Beranda"),
-                  // BottomNavigationBarItem(
-                  //     icon: Icon(Icons.category), label: "Katagori"),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.category), label: "Katagori"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.shopping_cart), label: "Keranjang"),
-            BottomNavigationBarItem(icon: Icon(Icons.message), label: "Presan"),
+            BottomNavigationBarItem(icon: Icon(Icons.message), label: "Pesan"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
           ]),
     ));

@@ -1,3 +1,4 @@
+import 'package:ajs_cell_app/app/modules/home/screen/katagori/detail_katagori/views/detail_katagori_view.dart';
 import 'package:ajs_cell_app/app/routes/app_pages.dart';
 import 'package:ajs_cell_app/app/widgets/button/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -7,52 +8,85 @@ class BerandaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ListView(
-      children: [
-        Padding(
+        appBar: AppBar(
+          title: Text(
+            "title",
+            style: TextStyle(
+                color: Color(0xff0245A3), fontWeight: FontWeight.bold),
+          ),
+        ),
+        body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
-            spacing: 20,
             children: [
-              CustomButton(
-                type: ButtonType.blue,
-                text: "Voucher",
-                onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
-                  'title': 'Voucher',
-                }),
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                onChanged: (value) {
+                  // Handle search logic here
+                  print('Search query: $value');
+                },
               ),
-              CustomButton(
-                type: ButtonType.blue,
-                text: "Kartu",
-                onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
-                  'title': 'Kartu',
-                }),
+              SizedBox(
+                height: 10,
               ),
-              CustomButton(
-                type: ButtonType.blue,
-                text: "Aksesoris",
-                onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
-                  'title': 'Aksesoris',
-                }),
-              ),
-              CustomButton(
-                type: ButtonType.blue,
-                text: "Perlengkapan Hp",
-                onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
-                  'title': 'Perlengkapan Hp',
-                }),
-              ),
-              CustomButton(
-                type: ButtonType.blue,
-                text: "Bibit Parfum",
-                onTap: () => Get.toNamed(Routes.VOCHER, arguments: {
-                  'title': 'Bibit Parfum',
-                }),
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2 items per row
+                    crossAxisSpacing: 10.0,
+                    mainAxisSpacing: 10.0,
+                  ),
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () => Get.to(() => DetailKatagoriView()),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Container(
+                              constraints: BoxConstraints(
+                                maxHeight: 100,
+                                maxWidth: 100,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blueAccent,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Item $index',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "NAMA title",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "Rp. 100.000 - Rp. 200.000",
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),
-        )
-      ],
-    ));
+        ));
   }
 }
