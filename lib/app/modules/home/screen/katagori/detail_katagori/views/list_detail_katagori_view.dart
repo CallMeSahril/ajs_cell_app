@@ -48,7 +48,9 @@ class ListDetailKatagoriView extends GetView<DetailKatagoriController> {
                   itemCount: 10,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      onTap: ()=> Get.to(() => DetailKatagoriView()),
+                      onTap: ()=> Get.to(() => DetailKatagoriView(
+                        id: index,
+                      )),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

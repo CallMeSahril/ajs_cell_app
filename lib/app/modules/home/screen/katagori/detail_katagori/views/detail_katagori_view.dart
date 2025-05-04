@@ -1,7 +1,50 @@
+import 'package:ajs_cell_app/app/domain/products/entities/product_entities.dart';
+import 'package:ajs_cell_app/app/modules/home/controllers/beranda_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class DetailKatagoriView extends StatelessWidget {
-  const DetailKatagoriView({super.key});
+class DetailKatagoriView extends StatefulWidget {
+  final int id;
+  const DetailKatagoriView({super.key, required this.id});
+
+  @override
+  State<DetailKatagoriView> createState() => _DetailKatagoriViewState();
+}
+
+class _DetailKatagoriViewState extends State<DetailKatagoriView> {
+  final BerandaController controller = Get.find<BerandaController>();
+  ProductEntities produk = ProductEntities();
+  bool isLoading = false;
+
+  int jumlah = 0;
+  @override
+  void initState() {
+    initDetailKatagori();
+    super.initState();
+  }
+
+  initDetailKatagori() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await controller.getProductId(id: widget.id);
+
+      setState(() {
+        produk = controller.products.value;
+      });
+    } catch (e) {
+      // Get.snackbar(
+      //   'Error',
+      //   'Failed to load profile: $e',
+      //   snackPosition: SnackPosition.BOTTOM,
+      // );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +58,12 @@ class DetailKatagoriView extends StatelessWidget {
                 children: [
                   Container(
                     height: 200,
-                    decoration: const BoxDecoration(color: Colors.blue),
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: NetworkImage(produk.image ?? ''))),
                   ),
                   Text(
-                    "Nama Katagori",
+                    "${produk.name?.capitalize ?? ''}",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text("Rp. 100.000 - Rp. 200.000",
@@ -32,16 +77,17 @@ class DetailKatagoriView extends StatelessWidget {
                     height: 70,
                     width: double.infinity,
                     child: ListView.builder(
-                        itemCount: 10,
+                        itemCount: produk.productTypes?.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
+                          final data = produk.productTypes?[index];
                           return Container(
                             width: 70,
                             color: Colors.grey,
                             margin: const EdgeInsets.all(10),
                             child: Center(
                               child: Text(
-                                "${index + 1}",
+                                data?.type ?? '',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
@@ -49,22 +95,27 @@ class DetailKatagoriView extends StatelessWidget {
                           );
                         }),
                   ),
-                  Text("Descrioption"),
+                  Text(
+                    "Description",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  ),
                   Column(
                     children: [
-                      ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 3,
-                          itemBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 2),
-                                child: Row(
-                                  children: [
-                                    Text("- Layanan ${index + 1}"),
-                                  ],
-                                ),
-                              )),
+                      Text("${produk.description}"),
+
+                      // ListView.builder(
+                      //     shrinkWrap: true,
+                      //     physics: const NeverScrollableScrollPhysics(),
+                      //     itemCount: 3,
+                      //     itemBuilder: (context, index) => Padding(
+                      //           padding: const EdgeInsets.symmetric(
+                      //               horizontal: 8, vertical: 2),
+                      //           child: Row(
+                      //             children: [
+                      //               Text("- Layanan ${index + 1}"),
+                      //             ],
+                      //           ),
+                      //         )),
                     ],
                   ),
                 ],
@@ -86,17 +137,25 @@ class DetailKatagoriView extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.remove),
                       onPressed: () {
-                        // Logic to decrease the quantity
+                        if (jumlah > 0) {
+                          setState(() {
+                            jumlah -= 1;
+                          });
+                        }
                       },
                     ),
                     Text(
-                      "0", // Replace with a variable to display the current quantity
+                      "$jumlah", // Replace with a variable to display the current quantity
                       style: TextStyle(fontSize: 18),
                     ),
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                        // Logic to increase the quantity
+                        if (jumlah < produk.stock!) {
+                          setState(() {
+                            jumlah += 1;
+                          });
+                        }
                       },
                     ),
                   ],

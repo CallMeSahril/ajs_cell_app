@@ -48,7 +48,10 @@ class _BerandaPageState extends State<BerandaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
           title: Text(
             "title",
             style: TextStyle(
@@ -91,46 +94,56 @@ class _BerandaPageState extends State<BerandaPage> {
                             itemBuilder: (context, index) {
                               final result = allProduk[index];
                               return GestureDetector(
-                                onTap: () => Get.to(() => DetailKatagoriView()),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Center(
-                                      child: Container(
-                                        constraints: BoxConstraints(
-                                          maxHeight: 100,
-                                          maxWidth: 100,
+                                onTap: () => Get.to(() => DetailKatagoriView(
+                                      id: result.id!,
+                                    )),
+                                child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset:
+                                              Offset(0, 3), // bayangan ke bawah
                                         ),
-                                        decoration: BoxDecoration(
-                                            color: Colors.blueAccent,
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            image: DecorationImage(
-                                                image: NetworkImage(
-                                                    result.image ?? ""))),
-                                        child: Center(
-                                          child: Text(
-                                            'Item $index',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16),
+                                      ],
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          constraints: BoxConstraints(
+                                            maxHeight: 100,
+                                            maxWidth: 100,
                                           ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.blueAccent,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      result.image ?? ""))),
                                         ),
                                       ),
-                                    ),
-                                    Text(
-                                      "${result.name}",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      formatRange(result.range ?? ""),
-                                      style: TextStyle(
-                                        fontSize: 12,
+                                      Text(
+                                        "${result.name}",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                    ),
-                                  ],
+                                      Text(
+                                        formatRange(result.range ?? ""),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },

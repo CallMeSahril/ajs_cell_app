@@ -1,15 +1,21 @@
 import 'package:ajs_cell_app/app/core/errors/failure.dart';
 import 'package:ajs_cell_app/app/domain/products/entities/product_entities.dart';
 import 'package:ajs_cell_app/app/domain/products/usescases/get_product_all.dart';
+import 'package:ajs_cell_app/app/domain/products/usescases/get_product_by_id.dart';
 import 'package:get/get.dart';
 
 class BerandaController extends GetxController {
   final GetAllProducts _getAllProducts;
-  BerandaController({required GetAllProducts getAllProducts})
-      : _getAllProducts = getAllProducts;
+  final GetProductById _getProductById;
+  BerandaController(
+      {required GetAllProducts getAllProducts,
+      required GetProductById getProductIByid})
+      : _getAllProducts = getAllProducts,
+        _getProductById = getProductIByid;
 
   var isLoading = false.obs;
   var allProducts = <ProductEntities>[].obs;
+  var products = ProductEntities().obs;
   Future<void> getAllProducts() async {
     isLoading.value = true;
 
@@ -29,6 +35,29 @@ class BerandaController extends GetxController {
       (data) async {
         allProducts.value = data;
         print(allProducts.value);
+      },
+    );
+  }
+
+  Future<void> getProductId({required int id}) async {
+    isLoading.value = true;
+
+    final result = await _getProductById(id: id);
+
+    isLoading.value = false;
+
+    return result.fold(
+      (failure) {
+        String message = switch (failure) {
+          NoConnectionFailure() => 'Tidak ada koneksi internet',
+          SlowConnectionFailure() => 'Koneksi internet lambat',
+          _ => failure.message ?? 'Terjadi kesalahan saat mengambil data',
+        };
+        print(message);
+      },
+      (data) async {
+        products.value = data;
+        print(products.value.id);
       },
     );
   }

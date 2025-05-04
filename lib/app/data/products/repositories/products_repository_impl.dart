@@ -14,4 +14,11 @@ class ProductsRepositoryImpl implements ProductsRepositories {
     return result
         .map((models) => models.map((model) => model.toEntity()).toList());
   }
+
+  @override
+  Future<Either<Failure, ProductEntities>> productsById(
+      {required int id}) async {
+    final result = await remoteDatasource.productsById(id: id);
+    return result.map((model) => model.toEntity());
+  }
 }

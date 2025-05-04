@@ -28,4 +28,26 @@ class ProductsRemoteDatasource {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  Future<Either<Failure, ProductsModel>> productsById({required int id}) async {
+    final isConnected = await NetworkChecker.isConnected();
+    if (!isConnected) return Left(NoConnectionFailure());
+
+    final isSlow = await NetworkChecker.isConnectionSlow();
+    if (isSlow) return Left(SlowConnectionFailure());
+
+    try {
+      final response = await apiHelper.get('/products/$id');
+
+      if (response.data == null || response.data['data'] == null) {
+        return Left(ServerFailure("Data tidak ditemukan"));
+      }
+
+      final data = response.data['data'];
+      final result = ProductsModel.fromJson(data);
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

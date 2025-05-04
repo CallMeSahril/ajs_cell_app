@@ -4,4 +4,5 @@ import 'package:dartz/dartz.dart';
 
 abstract class ProductsRepositories {
   Future<Either<Failure, List<ProductEntities>>> productsAll();
+  Future<Either<Failure, ProductEntities>> productsById({required int id});
 }
