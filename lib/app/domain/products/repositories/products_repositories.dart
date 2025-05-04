@@ -1,0 +1,7 @@
+import 'package:ajs_cell_app/app/core/errors/failure.dart';
+import 'package:ajs_cell_app/app/domain/products/entities/product_entities.dart';
+import 'package:dartz/dartz.dart';
+
+abstract class ProductsRepositories {
+  Future<Either<Failure, List<ProductEntities>>> productsAll();
+}

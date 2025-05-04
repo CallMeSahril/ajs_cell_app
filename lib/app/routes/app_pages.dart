@@ -1,4 +1,6 @@
 import 'package:ajs_cell_app/app/modules/auth/register/bindings/auth_binding.dart';
+import 'package:ajs_cell_app/app/modules/home/bindings/beranda_binding.dart';
+import 'package:ajs_cell_app/app/modules/home/bindings/products_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/profile_binding.dart';
 import 'package:get/get.dart';
 
@@ -28,7 +30,13 @@ class AppPages {
     GetPage(
       name: _Paths.HOME,
       page: () => const HomeView(),
-      bindings: [AuthBinding(), HomeBinding(), ProfileBinding()],
+      bindings: [
+        AuthBinding(),
+        ProductsBinding(),
+        HomeBinding(),
+        BerandaBinding(),
+        ProfileBinding()
+      ],
     ),
     GetPage(
       name: _Paths.LOADING,
