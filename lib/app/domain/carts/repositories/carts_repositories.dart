@@ -6,5 +6,8 @@ import 'package:dartz/dartz.dart';
 
 abstract class CartsRepositories {
   Future<Either<Failure, bool>> addCart({required AddCartEntities post});
+  Future<Either<Failure, bool>> deleteCart({required int id});
+  Future<Either<Failure, bool>> updateQuantity(
+      {required int id, required int quantity});
   Future<Either<Failure, List<CartEntities>>> getCart();
 }

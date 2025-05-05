@@ -14,7 +14,7 @@ class ProductType {
 
     factory ProductType.fromJson(Map<String, dynamic> json) => ProductType(
         id: json["id"],
-        productId: json["product_id"],
+        productId: int.parse(json["product_id"]),
         type: json["type"],
         price: json["price"],
     );

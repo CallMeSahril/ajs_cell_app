@@ -30,6 +30,50 @@ class CartRemoteDatasource {
     }
   }
 
+  Future<Either<Failure, bool>> deleteCart({required int id}) async {
+    final isConnected = await NetworkChecker.isConnected();
+    if (!isConnected) return Left(NoConnectionFailure());
+
+    final isSlow = await NetworkChecker.isConnectionSlow();
+    if (isSlow) return Left(SlowConnectionFailure());
+
+    try {
+      final response = await apiHelper.post('/carts/$id/destroy', data: {});
+
+      if (response.data == null || response.data['data'] == null) {
+        return Left(ServerFailure("Data tidak ditemukan"));
+      }
+
+      final result = response.data['meta']['code'] == 200;
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, bool>> updateQuantity(
+      {required int id, required int quantity}) async {
+    final isConnected = await NetworkChecker.isConnected();
+    if (!isConnected) return Left(NoConnectionFailure());
+
+    final isSlow = await NetworkChecker.isConnectionSlow();
+    if (isSlow) return Left(SlowConnectionFailure());
+
+    try {
+      final response = await apiHelper
+          .post('/carts/$id/update', data: {"quantity": quantity});
+
+      if (response.data == null || response.data['data'] == null) {
+        return Left(ServerFailure("Data tidak ditemukan"));
+      }
+
+      final result = response.data['meta']['code'] == 200;
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
   Future<Either<Failure, List<CartModel>>> getCart() async {
     final isConnected = await NetworkChecker.isConnected();
     if (!isConnected) return Left(NoConnectionFailure());

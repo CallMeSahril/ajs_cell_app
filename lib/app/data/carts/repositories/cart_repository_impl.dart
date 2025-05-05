@@ -16,6 +16,18 @@ class CartRepositoryImpl implements CartsRepositories {
   }
 
   @override
+  Future<Either<Failure, bool>> deleteCart({required int id}) async {
+    final result = await remoteDatasource.deleteCart(id: id);
+    return result;
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateQuantity( {required int id, required int quantity}) async {
+    final result = await remoteDatasource.updateQuantity(id: id,quantity: quantity );
+    return result;
+  }
+
+  @override
   Future<Either<Failure, List<CartEntities>>> getCart() async {
     final result = await remoteDatasource.getCart();
     return result;

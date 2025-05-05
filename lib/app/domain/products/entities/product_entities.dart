@@ -29,9 +29,9 @@ class ProductEntities {
         id: json["id"],
         name: json["name"],
         image: json["image"],
-        stock: json["stock"],
+        stock: int.parse(json["stock"]),
         description: json["description"],
-        categoryId: json["category_id"],
+        categoryId: int.parse(json["category_id"]),
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
