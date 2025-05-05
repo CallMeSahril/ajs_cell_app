@@ -1,5 +1,8 @@
 import 'package:ajs_cell_app/app/modules/auth/register/bindings/auth_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/beranda_binding.dart';
+import 'package:ajs_cell_app/app/modules/home/bindings/cart_binding.dart';
+import 'package:ajs_cell_app/app/modules/home/bindings/kategori_binding.dart';
+import 'package:ajs_cell_app/app/modules/home/bindings/keranjang_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/products_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/profile_binding.dart';
 import 'package:get/get.dart';
@@ -33,7 +36,10 @@ class AppPages {
       bindings: [
         AuthBinding(),
         ProductsBinding(),
+        CartBinding(),
         HomeBinding(),
+        KategoriBinding(),
+        KeranjangBinding(),
         BerandaBinding(),
         ProfileBinding()
       ],
@@ -64,7 +70,10 @@ class AppPages {
     GetPage(
       name: _Paths.VOCHER,
       page: () => const ListDetailKatagoriView(),
-      binding: DetailKatagoriBinding(),
+      bindings: [
+        ProductsBinding(),
+        DetailKatagoriBinding(),
+      ],
     ),
   ];
 }

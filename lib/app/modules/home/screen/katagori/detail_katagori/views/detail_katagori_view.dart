@@ -1,3 +1,4 @@
+import 'package:ajs_cell_app/app/domain/carts/entities/add_cart_entities.dart';
 import 'package:ajs_cell_app/app/domain/products/entities/product_entities.dart';
 import 'package:ajs_cell_app/app/modules/home/controllers/beranda_controller.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
   bool isLoading = false;
 
   int jumlah = 0;
+  int productTypeId = 0;
   @override
   void initState() {
     initDetailKatagori();
@@ -81,15 +83,25 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           final data = produk.productTypes?[index];
-                          return Container(
-                            width: 70,
-                            color: Colors.grey,
-                            margin: const EdgeInsets.all(10),
-                            child: Center(
-                              child: Text(
-                                data?.type ?? '',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                productTypeId = data!.id!;
+                              });
+                            },
+                            child: Container(
+                              width: 70,
+                              color: productTypeId == data?.id
+                                  ? Colors.blue
+                                  : Colors.grey[300],
+                              margin: const EdgeInsets.all(10),
+                              child: Center(
+                                child: Text(
+                                  data?.type ?? '',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           );
@@ -102,20 +114,6 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
                   Column(
                     children: [
                       Text("${produk.description}"),
-
-                      // ListView.builder(
-                      //     shrinkWrap: true,
-                      //     physics: const NeverScrollableScrollPhysics(),
-                      //     itemCount: 3,
-                      //     itemBuilder: (context, index) => Padding(
-                      //           padding: const EdgeInsets.symmetric(
-                      //               horizontal: 8, vertical: 2),
-                      //           child: Row(
-                      //             children: [
-                      //               Text("- Layanan ${index + 1}"),
-                      //             ],
-                      //           ),
-                      //         )),
                     ],
                   ),
                 ],
@@ -166,8 +164,43 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
         ),
         bottomNavigationBar: BottomAppBar(
           child: GestureDetector(
-            onTap: () {
-              // Add your logic here for button press
+            onTap: () async {
+              if (jumlah != 0) {
+                final result = await controller.postCart(
+                  post: AddCartEntities(
+                    productId: produk.id!,
+                    quantity: jumlah,
+                    productTypeId: productTypeId,
+                  ),
+                );
+
+                if (result) {
+                  Get.back();
+                  Get.snackbar(
+                    "Berhasil",
+                    "Produk berhasil ditambahkan ke keranjang.",
+                    snackPosition: SnackPosition.TOP,
+                    backgroundColor: Colors.green,
+                    colorText: Colors.white,
+                  );
+                } else {
+                  Get.snackbar(
+                    "Gagal",
+                    "Terjadi kesalahan saat menambahkan ke keranjang.",
+                    snackPosition: SnackPosition.TOP,
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
+                  );
+                }
+              } else {
+                Get.snackbar(
+                  "Jumlah tidak valid",
+                  "Silakan pilih jumlah terlebih dahulu.",
+                  snackPosition: SnackPosition.TOP,
+                  backgroundColor: Colors.orange,
+                  colorText: Colors.white,
+                );
+              }
             },
             child: Container(
               height: 50,
