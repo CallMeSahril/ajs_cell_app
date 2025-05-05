@@ -12,9 +12,9 @@ class CartModel extends CartEntities {
   factory CartModel.fromJson(Map<String, dynamic> json) => CartModel(
         cartId: json["cart_id"],
         productTypeId: int.parse(json["product_type_id"]),
-        productCart: json["product_cart"] == null
+        productCart: json["product_type"] == null
             ? null
-            : ProductCartElement.fromJson(json["product_cart"]),
+            : ProductCartElement.fromJson(json["product_type"]),
         quantity: int.parse(json["quantity"]),
         product: json["product"] == null
             ? null

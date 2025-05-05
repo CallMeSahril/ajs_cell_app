@@ -1,5 +1,6 @@
 import 'package:ajs_cell_app/app/core/utils/fungsi_format.dart';
 import 'package:ajs_cell_app/app/domain/carts/entities/cart_entities.dart';
+import 'package:ajs_cell_app/app/domain/orders/entities/create_orders_entitites.dart';
 import 'package:ajs_cell_app/app/modules/home/controllers/keranjang_controller.dart';
 import 'package:ajs_cell_app/app/modules/home/screen/checkout_page.dart';
 import 'package:flutter/material.dart';
@@ -232,10 +233,9 @@ class _KeranjangPageState extends State<KeranjangPage> {
               if (selectedCarts.isEmpty) {
                 Get.snackbar('Info', 'Pilih minimal satu item untuk checkout');
                 return;
+              } else {
+                Get.to(() => CheckoutPage(selectedCarts: selectedCarts));
               }
-
-              // Get.to(() => CheckoutPage(selectedCarts: selectedCarts));
-              Get.to(() => CheckoutPage());
             },
             child: Container(
               height: 50,

@@ -3,6 +3,7 @@ import 'package:ajs_cell_app/app/modules/home/bindings/beranda_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/cart_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/kategori_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/keranjang_binding.dart';
+import 'package:ajs_cell_app/app/modules/home/bindings/orders_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/products_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/profile_binding.dart';
 import 'package:get/get.dart';
@@ -37,6 +38,7 @@ class AppPages {
         AuthBinding(),
         ProductsBinding(),
         CartBinding(),
+        OrdersBinding(),
         HomeBinding(),
         KategoriBinding(),
         KeranjangBinding(),

@@ -32,7 +32,7 @@ class ProductCartElement {
   factory ProductCartElement.fromJson(Map<String, dynamic> json) =>
       ProductCartElement(
         id: json["id"],
-        productId: json["product_id"],
+        productId: int.parse(json["product_id"]),
         type: json["type"],
         price: json["price"],
       );
