@@ -1,4 +1,6 @@
+import 'package:ajs_cell_app/app/core/utils/fungsi_format.dart';
 import 'package:ajs_cell_app/app/data/orders/datasources/orders_remote_datasource.dart';
+import 'package:ajs_cell_app/app/data/orders/model/history_model.dart';
 import 'package:ajs_cell_app/app/data/orders/model/orders_status_model.dart';
 import 'package:ajs_cell_app/app/modules/home/controllers/riwayat_controller.dart';
 import 'package:flutter/material.dart';
@@ -56,39 +58,79 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
       body: TabBarView(
         controller: tabController,
         children: List.generate(tabs.length, (i) {
-          return FutureBuilder<List<OrderStatusEntities>>(
-            future: controller.getPending(status: statusList[i]),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(
-                    child: Text("Tidak ada pesanan ${tabs[i].toLowerCase()}"));
-              }
+          return i == 3
+              ? FutureBuilder<List<HistoryEntities>>(
+                  future: controller.getHistory(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text("Tidak ada pesanan selesai"));
+                    }
 
-              final data = snapshot.data!;
-              return ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final order = data[index];
-           return       BuildCardPesan(
-                    image: "",
-                    name: "Customer",
-                    orderId: order.merchantOrderId ?? "No ID",
-                    message: "Status: ${order.status ?? 'Tidak diketahui'}",
-                    time: order.createdAt != null
-                        ? "${order.createdAt!.hour}:${order.createdAt!.minute.toString().padLeft(2, '0')}"
-                        : "-",
-                    tanggal: order.createdAt != null
-                        ? "${order.createdAt!.year}-${order.createdAt!.month.toString().padLeft(2, '0')}-${order.createdAt!.day.toString().padLeft(2, '0')}"
-                        : "-",
-                    unreadCount: 0,
-                  );
-                },
-              );
-            },
-          );
+                    final data = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final order = data[index];
+                        return BuildCardPesan(
+                          totalAmount:  order.totalAmount ?? "0",
+
+                          image: "",
+                          name: order.name ?? "Pelanggan",
+                          orderId: "Riwayat", // bisa diganti kalau ada ID-nya
+                          message:
+                              "Status: ${order.status ?? 'Tidak diketahui'}",
+                          time: order.completedAt != null
+                              ? "${order.completedAt!.hour}:${order.completedAt!.minute.toString().padLeft(2, '0')}"
+                              : "-",
+                          tanggal: order.completedAt != null
+                              ? "${order.completedAt!.day.toString().padLeft(2, '0')}-${order.completedAt!.month.toString().padLeft(2, '0')}-${order.completedAt!.year}"
+                              : "-",
+                          unreadCount: 0,
+                        );
+                      },
+                    );
+                  },
+                )
+              : FutureBuilder<List<OrderStatusEntities>>(
+                  future: controller.getPending(status: statusList[i]),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                          child: Text(
+                              "Tidak ada pesanan ${tabs[i].toLowerCase()}"));
+                    }
+
+                    final data = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final order = data[index];
+                        return BuildCardPesan(
+                          totalAmount: order.totalAmount ?? "0",
+                          image: "",
+                          name: "Customer",
+                          orderId: order.merchantOrderId ?? "No ID",
+                          message:
+                              "Status: ${order.status ?? 'Tidak diketahui'}",
+                          time: order.createdAt != null
+                              ? "${order.createdAt!.hour}:${order.createdAt!.minute.toString().padLeft(2, '0')}"
+                              : "-",
+                          tanggal: order.createdAt != null
+                              ? "${order.createdAt!.day.toString().padLeft(2, '0')}-${order.createdAt!.month.toString().padLeft(2, '0')}-${order.createdAt!.year}"
+                              : "-",
+                          unreadCount: 0,
+                        );
+                      },
+                    );
+                  },
+                );
         }),
       ),
     );
@@ -103,6 +145,7 @@ class BuildCardPesan extends StatelessWidget {
   final String image;
   final int unreadCount;
   final String tanggal; // <- tambahkan ini
+  final String totalAmount;
 
   const BuildCardPesan({
     super.key,
@@ -113,6 +156,7 @@ class BuildCardPesan extends StatelessWidget {
     required this.unreadCount,
     required this.image,
     required this.tanggal, // <-- ini juga
+    required this.totalAmount,
   });
 
   @override
@@ -172,6 +216,10 @@ class BuildCardPesan extends StatelessWidget {
                     Text("Order ID: $orderId",
                         style:
                             const TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text("Total Bayar: ${formatCurrency(totalAmount)}",
+                        style: const TextStyle(
+                            fontSize: 12, color: Colors.black87)),
+
                     Text("Tanggal: $tanggal",
                         style:
                             const TextStyle(fontSize: 12, color: Colors.grey)),

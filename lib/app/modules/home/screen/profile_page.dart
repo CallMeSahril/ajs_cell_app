@@ -1,5 +1,6 @@
 import 'package:ajs_cell_app/app/core/config/token.dart';
 import 'package:ajs_cell_app/app/modules/home/controllers/profile_controller.dart';
+import 'package:ajs_cell_app/app/modules/home/screen/update_profile_page.dart';
 import 'package:ajs_cell_app/app/routes/app_pages.dart';
 import 'package:ajs_cell_app/app/widgets/button/custom_button.dart';
 import 'package:ajs_cell_app/app/widgets/textfield/custom_text_form_field.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({super.key});
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -17,16 +18,17 @@ class _ProfilePageState extends State<ProfilePage> {
   final ProfileController controller = Get.find<ProfileController>();
 
   bool isLoading = false;
+
   TextEditingController fullName = TextEditingController();
   TextEditingController handphone = TextEditingController();
   TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
   TextEditingController alamat = TextEditingController();
+  TextEditingController jenisKelamin = TextEditingController();
 
   @override
   void initState() {
-    initProfile();
     super.initState();
+    initProfile();
   }
 
   Future<void> initProfile() async {
@@ -35,24 +37,16 @@ class _ProfilePageState extends State<ProfilePage> {
     });
 
     try {
-      await controller.getProfile(); // Tambahkan await di sini
+      await controller.getProfile();
       final user = controller.userData.value;
 
-      setState(() {
-        setState(() {
-          fullName.text = user.name ?? '';
-          handphone.text = user.phone ?? '';
-          email.text = user.email ?? '';
-          // password.text = user.password ?? '';
-          // alamat.text = user.address ?? '';
-        });
-      });
+      fullName.text = user.name ?? '';
+      handphone.text = user.phone ?? '';
+      email.text = user.email ?? '';
+      alamat.text =   '';
+      jenisKelamin.text =  'Pria/Wanita';
     } catch (e) {
-      // Get.snackbar(
-      //   'Error',
-      //   'Failed to load profile: $e',
-      //   snackPosition: SnackPosition.BOTTOM,
-      // );
+      // error handling optional
     } finally {
       setState(() {
         isLoading = false;
@@ -63,51 +57,63 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading == true
-          ? Center(child: CircularProgressIndicator())
+      backgroundColor: const Color(0xff006BC5),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: const BackButton(color: Colors.white),
+        title: const Text(
+          'Profil',
+          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.white),
+            onPressed: () {
+              Get.to(UpdateProfilePage());
+            },
+          ),
+        ],
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.all(16),
               child: ListView(
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        'Profil',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage:
-                            AssetImage('assets/images/profile.png'),
-                      ),
-                    ],
+                  Center(
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage: const AssetImage('assets/images/profile.png'),
+                    ),
                   ),
+                  const SizedBox(height: 16),
                   Column(
-                    spacing: 10,
                     children: [
                       CustomTextFormField(
                         title: 'Nama Lengkap',
                         controller: fullName,
                         readOnly: true,
                       ),
+                      const SizedBox(height: 10),
                       CustomTextFormField(
-                        title: 'Nama Telepon',
-                        controller: handphone,
+                        title: 'Jenis Kelamin',
+                        controller: jenisKelamin,
                         readOnly: true,
                       ),
+                      const SizedBox(height: 10),
                       CustomTextFormField(
                         title: 'Email',
                         controller: email,
                         readOnly: true,
                       ),
+                      const SizedBox(height: 10),
                       CustomTextFormField(
-                        title: 'Password',
-                        controller: password,
+                        title: 'Nomor hp',
+                        controller: handphone,
                         readOnly: true,
                       ),
+                      const SizedBox(height: 10),
                       CustomTextFormField(
                         title: 'Alamat',
                         controller: alamat,
@@ -118,17 +124,22 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-      bottomNavigationBar: isLoading == true
-          ? SizedBox.shrink()
-          : BottomAppBar(
-              color: Color(0xffFFFFFF),
-              child: CustomButton(
-                type: ButtonType.blue,
-                text: "Log out",
-                onTap: () async {
+      bottomNavigationBar: isLoading
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () async {
                   await AuthHelper.deleteToken();
                   Get.offAllNamed(Routes.LOGIN);
                 },
+                child: const Text("Log out"),
               ),
             ),
     );
