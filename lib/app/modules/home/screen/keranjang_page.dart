@@ -176,7 +176,6 @@ class _KeranjangPageState extends State<KeranjangPage> {
                                 Column(
                                   spacing: 10,
                                   children: [
-                                    Text("Ubah"),
                                     GestureDetector(
                                         onTap: () {
                                           showDialog(

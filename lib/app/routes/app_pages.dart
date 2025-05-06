@@ -1,3 +1,5 @@
+import 'package:ajs_cell_app/app/data/chat/bindings/chat_bindings.dart';
+import 'package:ajs_cell_app/app/modules/auth/bindings/authcontroller_bindings.dart';
 import 'package:ajs_cell_app/app/modules/auth/register/bindings/auth_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/beranda_binding.dart';
 import 'package:ajs_cell_app/app/modules/home/bindings/cart_binding.dart';
@@ -36,6 +38,8 @@ class AppPages {
       page: () => const HomeView(),
       bindings: [
         AuthBinding(),
+        ChatBindings(),
+        AuthcontrollerBindings(),
         ProductsBinding(),
         CartBinding(),
         OrdersBinding(),

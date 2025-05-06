@@ -24,6 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController email = TextEditingController();
   TextEditingController alamat = TextEditingController();
   TextEditingController jenisKelamin = TextEditingController();
+  String image = '';
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
       fullName.text = user.name ?? '';
       handphone.text = user.phone ?? '';
       email.text = user.email ?? '';
+      image = user.image ?? '';
       alamat.text =   '';
       jenisKelamin.text =  'Pria/Wanita';
     } catch (e) {
@@ -81,12 +83,19 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.all(16),
               child: ListView(
                 children: [
-                  Center(
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage: const AssetImage('assets/images/profile.png'),
+                    Center(
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: NetworkImage(image),
+                        fit: BoxFit.cover,
+                      ),
+                      ),
                     ),
-                  ),
+                    ),
                   const SizedBox(height: 16),
                   Column(
                     children: [

@@ -62,6 +62,7 @@ class LoginController extends GetxController {
       (data) async {
         // print(data.accessToken);
         await storage.saveToken("${data.tokenType} ${data.accessToken}" ?? '');
+        await storage.saveUserId("${data.user!.id}");
 
         Get.snackbar(
           "Login Berhasil",

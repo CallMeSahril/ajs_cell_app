@@ -7,6 +7,7 @@ class UserModel extends UserEntity {
     super.email,
     super.phone,
     super.role,
+    super.image,
     super.emailVerifiedAt,
     super.createdAt,
     super.updatedAt,
@@ -16,6 +17,7 @@ class UserModel extends UserEntity {
     return UserModel(
       id: json['id'],
       name: json['name'],
+      image: json['image'],
       email: json['email'],
       phone: json['phone'],
       role: json['role'],
@@ -35,6 +37,7 @@ class UserModel extends UserEntity {
       emailVerifiedAt: emailVerifiedAt,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      image: image
     );
   }
 }

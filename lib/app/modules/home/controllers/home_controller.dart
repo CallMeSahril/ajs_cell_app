@@ -1,4 +1,5 @@
 import 'package:ajs_cell_app/app/modules/home/screen/beranda_page.dart';
+import 'package:ajs_cell_app/app/modules/home/screen/chat_page.dart';
 import 'package:ajs_cell_app/app/modules/home/screen/katagori/katagori_page.dart';
 import 'package:ajs_cell_app/app/modules/home/screen/keranjang_page.dart';
 import 'package:ajs_cell_app/app/modules/home/screen/riwayat_pesanan_page.dart';
@@ -18,6 +19,7 @@ class HomeController extends GetxController {
     KatagoryPage(),
     KeranjangPage(),
     RiwayatPesananPage(),
+    ChatPage(),
     ProfilePage(),
   ];
 }

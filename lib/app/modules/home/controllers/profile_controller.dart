@@ -1,11 +1,13 @@
 import 'package:ajs_cell_app/app/core/errors/failure.dart';
 import 'package:ajs_cell_app/app/domain/auth/entities/user_entitites.dart';
 import 'package:ajs_cell_app/app/domain/auth/usescases/get_profile.dart';
+import 'package:ajs_cell_app/app/modules/auth/controller/auth_controller.dart';
 import 'package:get/get.dart';
 
 class ProfileController extends GetxController {
   //TODO: Implement LoginController
   final GetProfile _getProfile;
+  final AuthController authController = Get.find<AuthController>();
 
   ProfileController({required GetProfile getProfile})
       : _getProfile = getProfile;

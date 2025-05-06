@@ -22,6 +22,14 @@ class AuthStorage {
 
     print("res :: $res");
   }
+
+  Future<void> saveUserId(String userId) async {
+    print('call save user id');
+    print(userId);
+    var res = await _prefs?.setString('user_id', userId);
+
+    print("res :: $res");
+  }
 }
 
 class AuthHelper {
@@ -30,9 +38,13 @@ class AuthHelper {
     return authStorage._prefs?.getString('refresh_token');
   }
 
+  static Future<String?> getUserId() async {
+    final authStorage = await AuthStorage.getInstance();
+    return authStorage._prefs?.getString('user_id');
+  }
+
   static Future<void> deleteToken() async {
     final authStorage = await AuthStorage.getInstance();
-    await authStorage._prefs?.remove('refresh_token');
-    print('Token deleted');
+    // Add your delete logic here
   }
 }

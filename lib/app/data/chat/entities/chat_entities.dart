@@ -4,9 +4,11 @@ class ChatEntities {
   final int id;
   final String pesan;
   final DateTime createdAt;
+  final String type;
   final UserChatEntities user;
 
   ChatEntities({
+    required this.type,
     required this.id,
     required this.pesan,
     required this.createdAt,
@@ -15,10 +17,11 @@ class ChatEntities {
 
   factory ChatEntities.fromJson(Map<String, dynamic> json) {
     return ChatEntities(
-      id: json['id'],
+      id: json['id'] ?? 0,
       pesan: json['pesan'],
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
       user: UserChatEntities.fromJson(json['user']),
+      type: json['type'],
     );
   }
 }
