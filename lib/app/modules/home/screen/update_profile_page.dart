@@ -21,24 +21,30 @@ class UpdateProfilePage extends StatefulWidget {
 class _UpdateProfilePageState extends State<UpdateProfilePage> {
   final ProfileController profileController = Get.find<ProfileController>();
 
-  late TextEditingController nameController;
-  late TextEditingController emailController;
-  late TextEditingController phoneController;
+  late TextEditingController nameController = TextEditingController();
+  late TextEditingController emailController = TextEditingController();
+  late TextEditingController phoneController = TextEditingController();
 
   File? selectedImage;
 
   @override
   void initState() {
     super.initState();
+    init();
+  }
+
+  init()  {
+
     final user = profileController.userData.value;
 
     nameController = TextEditingController(text: user.name ?? '');
     emailController = TextEditingController(text: user.email ?? '');
     phoneController = TextEditingController(text: user.phone ?? '');
-
+    print("${user.image}");
     if (user.image != null && user.image!.isNotEmpty) {
-      loadImageFromUrl(user.image!);
+       loadImageFromUrl(user.image!);
     }
+    print("${user.image}");
   }
 
   @override
@@ -46,6 +52,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     nameController.dispose();
     emailController.dispose();
     phoneController.dispose();
+    selectedImage = null;
     super.dispose();
   }
 
@@ -54,7 +61,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
       final response = await http.get(Uri.parse(imageUrl));
       if (response.statusCode == 200) {
         final tempDir = await getTemporaryDirectory();
-        final file = File('${tempDir.path}/profile.jpg');
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final file =
+            File('${tempDir.path}/profile_$timestamp.jpg'); // ← nama unik
         await file.writeAsBytes(response.bodyBytes);
         setState(() {
           selectedImage = file;
@@ -138,7 +147,16 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               );
 
               if (success) {
+                if (selectedImage != null && await selectedImage!.exists()) {
+                  await selectedImage!.delete();
+                  setState(() {
+                    selectedImage =
+                        null; // reset ke null agar gambar default tampil
+                  });
+                }
+
                 Get.offAllNamed(Routes.HOME);
+
                 Get.snackbar("Sukses", "Profil berhasil diperbarui");
                 profileController.getProfile(); // refresh profile
               } else {

@@ -1,3 +1,4 @@
+import 'package:ajs_cell_app/app/core/utils/fungsi_format.dart';
 import 'package:ajs_cell_app/app/domain/carts/entities/add_cart_entities.dart';
 import 'package:ajs_cell_app/app/domain/products/entities/product_entities.dart';
 import 'package:ajs_cell_app/app/modules/home/controllers/beranda_controller.dart';
@@ -68,7 +69,7 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
                     "${produk.name?.capitalize ?? ''}",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text("Rp. 100.000 - Rp. 200.000",
+                  Text("Rp. ${formatRange(produk.range ?? '')}",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(
