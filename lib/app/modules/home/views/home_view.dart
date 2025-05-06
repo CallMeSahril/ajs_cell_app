@@ -24,7 +24,7 @@ class HomeView extends GetView<HomeController> {
                 BottomNavigationBarItem(
                     icon: Icon(Icons.shopping_cart), label: "Keranjang"),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.message), label: "Pesan"),
+                    icon: Icon(Icons.history), label: "Riwayat Transaksi"),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.person), label: "Profile"),
               ]),

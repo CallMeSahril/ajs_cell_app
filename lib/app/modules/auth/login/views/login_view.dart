@@ -63,6 +63,18 @@ class LoginView extends GetView<LoginController> {
                 ],
               ),
             ),
+SizedBox(height: 10,),            GestureDetector(
+              onTap: () {
+                Get.toNamed(Routes.REGISTER);
+              },
+              child: Text(
+                "Klik di sini untuk daftar",
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            )
           ],
         ),
       ),

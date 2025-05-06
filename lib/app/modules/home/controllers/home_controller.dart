@@ -1,7 +1,7 @@
 import 'package:ajs_cell_app/app/modules/home/screen/beranda_page.dart';
 import 'package:ajs_cell_app/app/modules/home/screen/katagori/katagori_page.dart';
 import 'package:ajs_cell_app/app/modules/home/screen/keranjang_page.dart';
-import 'package:ajs_cell_app/app/modules/home/screen/pesan_page.dart';
+import 'package:ajs_cell_app/app/modules/home/screen/riwayat_pesanan_page.dart';
 import 'package:ajs_cell_app/app/modules/home/screen/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,7 +17,7 @@ class HomeController extends GetxController {
     BerandaPage(),
     KatagoryPage(),
     KeranjangPage(),
-    PesanPage(),
+    RiwayatPesananPage(),
     ProfilePage(),
   ];
 }

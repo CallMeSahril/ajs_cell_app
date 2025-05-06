@@ -7,9 +7,10 @@ import 'package:ajs_cell_app/app/domain/rajaongkir/entities/courire_entities.dar
 import 'package:ajs_cell_app/app/domain/rajaongkir/entities/ongkir_service.dart';
 import 'package:ajs_cell_app/app/modules/home/controllers/keranjang_controller.dart';
 import 'package:ajs_cell_app/app/modules/home/screen/edit_address_pade.dart';
-import 'package:ajs_cell_app/app/modules/home/screen/pembayaran_page.dart';
+import 'package:ajs_cell_app/app/modules/home/screen/pembayaran_pay.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class CheckoutPage extends StatefulWidget {
   final List<CartEntities> selectedCarts;
@@ -125,16 +126,24 @@ class _CheckoutPageState extends State<CheckoutPage> {
     };
 
     try {
-      ApiHelper apiHelper = ApiHelper();
-      final response = await apiHelper.post('/orders', data: payload);
+      final now = DateTime.now();
+      final orderId = DateTime.now().millisecondsSinceEpoch.toString();
+      final formattedDate = DateFormat('yyyy-MM-dd').format(now);
+      final cartIds = widget.selectedCarts.map((cart) => cart.cartId!).toList();
 
-      if (response.statusCode == 200) {
-        Get.snackbar("Berhasil", "Pesanan berhasil dibuat");
-        Get.to(() => PembayaranPage()); // atau redirect ke halaman sukses
-      } else {
-        Get.snackbar(
-            "Gagal", "Pesanan gagal dikirim. (${response.statusMessage})");
-      }
+      Get.to(() => PembayaranPay(
+            virtualName: selectedPaymentMethod!,
+            address: selectedAddress!,
+            totalPembayaran: grandTotal,
+            virtualAccount: DateTime.now().millisecondsSinceEpoch.toString(),
+            status: "pending",
+            orderId: DateTime.now().millisecondsSinceEpoch.toString(),
+            tanggalOrder: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            kurirName: selectedCourier!.name,
+            layananKurir: selectedOngkir!.service,
+            ongkir: selectedOngkir!.value,
+            cartIds: cartIds,
+          ));
     } catch (e) {
       Get.snackbar("Error", "Terjadi kesalahan: $e");
     }
