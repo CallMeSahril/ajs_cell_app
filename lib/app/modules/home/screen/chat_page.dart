@@ -78,8 +78,8 @@ class _ChatPageState extends State<ChatPage> {
                 itemBuilder: (context, index) {
                   final chat = limitedChats[index];
                   final isMe = chat.type == "chat";
-                  final dateTime =
-                      DateFormat('HH:mm').format(chat.createdAt!);
+                    final dateTime = DateFormat('HH:mm').format(
+                      chat.createdAt!.toUtc().add(const Duration(hours: 7)));
 
                   return Align(
                     alignment:
