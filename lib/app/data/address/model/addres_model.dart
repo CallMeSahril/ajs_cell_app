@@ -67,14 +67,14 @@ class AddressEntities {
   factory AddressEntities.fromJson(Map<String, dynamic> json) =>
       AddressEntities(
         id: json["id"],
-        userId: json["user_id"],
+        userId: json["user_id"].toString()  ,
         name: json["name"],
         phone: json["phone"],
         address: json["address"],
         city: json["city"],
         province: json["province"],
-        cityId: json["city_id"],
-        provinceId: json["province_id"],
+        cityId: json["city_id"].toString(),
+        provinceId: json["province_id"].toString(),
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
