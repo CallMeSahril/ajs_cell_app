@@ -69,7 +69,7 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
                     "${produk.name?.capitalize ?? ''}",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text("Rp. ${formatRange(produk.range ?? '')}",
+                  Text("${formatRange(produk.range ?? '')}",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(

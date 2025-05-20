@@ -28,6 +28,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cached_network_image: ^3.4.1
+  carousel_slider: ^5.0.0
   connectivity_plus: ^6.1.4
   cupertino_icons: ^1.0.8
   dartz: ^0.10.1
@@ -36,11 +38,10 @@ dependencies:
     sdk: flutter
   flutter_dotenv: ^5.2.1
   get: ^4.7.2
-  shared_preferences: ^2.5.3
+  http: ^1.4.0
   image_picker: ^1.1.2
   path_provider: ^2.1.5
-  http: ^1.4.0
-
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_lints: ^5.0.0

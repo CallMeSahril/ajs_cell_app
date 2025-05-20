@@ -1,3 +1,4 @@
+import 'package:ajs_cell_app/app/data/banner/controller/banner_controller.dart';
 import 'package:ajs_cell_app/app/domain/carts/repositories/repositories.dart';
 import 'package:ajs_cell_app/app/domain/carts/usescases/post_cart.dart';
 import 'package:ajs_cell_app/app/domain/products/repositories/products_repositories.dart';
@@ -18,6 +19,7 @@ class BerandaBinding extends Bindings {
     Get.lazyPut<PostCart>(
       () => PostCart(Get.find<CartsRepositories>()),
     );
+     
     Get.lazyPut<BerandaController>(
       () => BerandaController(
         getAllProducts: Get.find<GetAllProducts>(),

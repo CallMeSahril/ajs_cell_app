@@ -49,7 +49,7 @@ class RegisterView extends GetView<RegisterController> {
                   controller: controller.nameController,
                 ),
                 CustomTextFormField(
-                  title: 'Nama Telepon',
+                  title: 'No Telepon',
                   controller: controller.phoneController,
                 ),
                 CustomTextFormField(
