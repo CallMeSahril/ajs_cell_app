@@ -79,11 +79,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }).toList();
   }
 
-  Future<void> cekOngkir(String courierCode) async {
+  Future<void> cekOngkir(String courierCode, String tujuan) async {
     ApiHelper apiHelper = ApiHelper();
     final response = await apiHelper.post('/check-shipping-cost', data: {
-      "origin": 1,
-      "destination": 1,
+      "origin": 235,
+      "destination": int.parse(tujuan),
       "weight": 1,
       "courier": courierCode
     });
@@ -118,6 +118,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
         widget.selectedCarts.map((cart) => cart.cartId!).toList();
 
     // Buat payload request
+
+    try {
+      final now = DateTime.now();
+      final orderId = DateTime.now().millisecondsSinceEpoch.toString();
+      final formattedDate = DateFormat('yyyy-MM-dd').format(now);
+      final cartIds = widget.selectedCarts.map((cart) => cart.cartId!).toList();
+      submitOrderToServer(context, cartIds);
+    } catch (e) {
+      Get.snackbar("Error", "Terjadi kesalahan: $e");
+    }
+  }
+
+Future<void> submitOrderToServer(
+    BuildContext context, List<int> cartIds) async {
+  try {
     final Map<String, dynamic> payload = {
       "cart_ids": cartIds,
       "method_pembayaran": selectedPaymentMethod,
@@ -125,29 +140,32 @@ class _CheckoutPageState extends State<CheckoutPage> {
       "address_id": selectedAddress!.id,
     };
 
-    try {
-      final now = DateTime.now();
-      final orderId = DateTime.now().millisecondsSinceEpoch.toString();
-      final formattedDate = DateFormat('yyyy-MM-dd').format(now);
-      final cartIds = widget.selectedCarts.map((cart) => cart.cartId!).toList();
+    ApiHelper apiHelper = ApiHelper();
+    final response = await apiHelper.post('/orders', data: payload);
+    print(response.data);
 
-      Get.to(() => PembayaranPay(
-            virtualName: selectedPaymentMethod!,
-            address: selectedAddress!,
-            totalPembayaran: grandTotal,
-            virtualAccount: DateTime.now().millisecondsSinceEpoch.toString(),
-            status: "pending",
-            orderId: DateTime.now().millisecondsSinceEpoch.toString(),
-            tanggalOrder: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            kurirName: selectedCourier!.name,
-            layananKurir: selectedOngkir!.service,
-            ongkir: selectedOngkir!.value,
-            cartIds: cartIds,
-          ));
-    } catch (e) {
-      Get.snackbar("Error", "Terjadi kesalahan: $e");
+    if (response.statusCode == 200) {
+      final merchantOrderId = response.data['meta']?['message']?['merchantOrderId'];
+      if (merchantOrderId != null) {
+        Get.snackbar("Berhasil", "Pesanan berhasil dikirim");
+              Get.offAll(
+                        () => WebviewPembayaranPage(url: response.data['meta']?['message']['paymentUrl']));
+        // Get.to(() => PembayaranPay(
+        //   paymentUrl: response.data['meta']?['message']['paymentUrl'],
+        //       address: selectedAddress!,
+        //       cartIds: cartIds,
+        //       merchantOrderId: merchantOrderId.toString(),
+        //     ));
+      } else {
+        Get.snackbar("Gagal", "Merchant Order ID tidak ditemukan");
+      }
+    } else {
+      Get.snackbar("Gagal", "Gagal membuat pesanan: ${response.statusMessage}");
     }
+  } catch (e) {
+    Get.snackbar("Error", "Terjadi kesalahan saat submit: $e");
   }
+}
 
   int selectedAddressId = 0;
 
@@ -299,7 +317,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             onTap: () async {
                               selectedCourier = courier;
                               selectedOngkir = null;
-                              await cekOngkir(courier.code);
+                              await cekOngkir(
+                                  courier.code, selectedAddress?.cityId ?? "1");
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 8),

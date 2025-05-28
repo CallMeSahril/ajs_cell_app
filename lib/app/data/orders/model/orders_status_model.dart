@@ -55,9 +55,9 @@ class OrderStatusEntities {
 
     factory OrderStatusEntities.fromJson(Map<String, dynamic> json) => OrderStatusEntities(
         id: json["id"],
-        userId: json["user_id"],
-        totalAmount: json["total_amount"],
-        addressId: json["address_id"],
+        userId: json["user_id"].toString(),
+        totalAmount: json["total_amount"].toString(),
+        addressId: json["address_id"].toString(),
         merchantOrderId: json["merchant_order_id"],
         paymentUrl: json["payment_url"],
         vaNumber: json["va_number"],

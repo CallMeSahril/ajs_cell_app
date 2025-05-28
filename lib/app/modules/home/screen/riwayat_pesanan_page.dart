@@ -1,8 +1,10 @@
 import 'package:ajs_cell_app/app/core/utils/fungsi_format.dart';
+import 'package:ajs_cell_app/app/data/address/model/addres_model.dart';
 import 'package:ajs_cell_app/app/data/orders/datasources/orders_remote_datasource.dart';
 import 'package:ajs_cell_app/app/data/orders/model/history_model.dart';
 import 'package:ajs_cell_app/app/data/orders/model/orders_status_model.dart';
 import 'package:ajs_cell_app/app/modules/home/controllers/riwayat_controller.dart';
+import 'package:ajs_cell_app/app/modules/home/screen/pembayaran_pay.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -43,7 +45,7 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
     return Scaffold(
       backgroundColor: const Color(0xffFFFFFF),
       appBar: AppBar(
-        title: const Text('Riwayat Pesanan'),
+        title: const Text('Riwayat Pesanan A'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -76,7 +78,7 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
                       itemBuilder: (context, index) {
                         final order = data[index];
                         return BuildCardPesan(
-                          totalAmount:  order.totalAmount ?? "0",
+                          totalAmount: order.totalAmount ?? "0",
 
                           image: "",
                           name: order.name ?? "Pelanggan",
@@ -108,6 +110,12 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
                     }
 
                     final data = snapshot.data!;
+                    data.sort((a, b) {
+                      if (a.createdAt == null && b.createdAt == null) return 0;
+                      if (a.createdAt == null) return 1;
+                      if (b.createdAt == null) return -1;
+                      return b.createdAt!.compareTo(a.createdAt!);
+                    });
                     return ListView.builder(
                       itemCount: data.length,
                       itemBuilder: (context, index) {
@@ -126,6 +134,20 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
                               ? "${order.createdAt!.day.toString().padLeft(2, '0')}-${order.createdAt!.month.toString().padLeft(2, '0')}-${order.createdAt!.year}"
                               : "-",
                           unreadCount: 0,
+                          onTap: () {
+                            if (order.status == "pending") {
+                               Get.to(
+                        () => WebviewPembayaranPage(url:  order.paymentUrl!,back: true,));
+                              // Get.to(() => PembayaranPay(
+                              //   paymentUrl: order.paymentUrl,
+                              //       address: AddressEntities(
+                              //           id: int.parse(order.addressId ?? '0') ), // pastikan ini ada di model
+                              //       cartIds: [], // opsional jika perlu
+                              //       merchantOrderId:
+                              //           order.merchantOrderId ?? '',
+                              //     ));
+                            }
+                          },
                         );
                       },
                     );
@@ -146,6 +168,7 @@ class BuildCardPesan extends StatelessWidget {
   final int unreadCount;
   final String tanggal; // <- tambahkan ini
   final String totalAmount;
+  final VoidCallback? onTap;
 
   const BuildCardPesan({
     super.key,
@@ -157,14 +180,13 @@ class BuildCardPesan extends StatelessWidget {
     required this.image,
     required this.tanggal, // <-- ini juga
     required this.totalAmount,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // TODO: Navigasi ke halaman detail jika diperlukan
-      },
+      onTap: onTap,
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
