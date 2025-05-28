@@ -41,6 +41,7 @@ class IklanModel {
 class BannerEntities {
   final int? id;
   final String? title;
+  final String? productId;
   final String? image;
   final String? type;
   final DateTime? createdAt;
@@ -49,6 +50,7 @@ class BannerEntities {
   BannerEntities({
     this.id,
     this.title,
+    this.productId,
     this.image,
     this.type,
     this.createdAt,
@@ -60,6 +62,7 @@ class BannerEntities {
         id: json["id"],
         title: json["title"],
         image: json["image"],
+        productId: json["product_id"],
         type: json["type"],
         createdAt: json["created_at"] == null
             ? null

@@ -167,23 +167,23 @@ class _BerandaPageState extends State<BerandaPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                Get.to(
-                                    () => SemuaBannerPage(banners: bannerList));
-                              },
-                              child: CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 180.0,
-                                  autoPlay: true,
-                                  enlargeCenterPage: true,
-                                ),
-                                items: bannerList.map((banner) {
-                                  return Builder(
-                                    builder: (BuildContext context) {
-                                      return ClipRRect(
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                height: 180.0,
+                                autoPlay: true,
+                                enlargeCenterPage: true,
+                              ),
+                              items: bannerList.map((banner) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return GestureDetector(
+                                      onTap: () => Get.to(() => DetailKatagoriView(
+                                                id: int.parse(banner.productId.toString()),
+                                              )),
+                                      child: ClipRRect(
                                         borderRadius: BorderRadius.circular(10),
                                         child: CachedNetworkImage(
+                                          
                                           imageUrl: banner.image ?? '',
                                           fit: BoxFit.cover,
                                           width: double.infinity,
@@ -193,11 +193,11 @@ class _BerandaPageState extends State<BerandaPage> {
                                           errorWidget: (context, url, error) =>
                                               Icon(Icons.broken_image),
                                         ),
-                                      );
-                                    },
-                                  );
-                                }).toList(),
-                              ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }).toList(),
                             ),
                             SizedBox(height: 16),
                           ],
@@ -268,7 +268,8 @@ class _BerandaPageState extends State<BerandaPage> {
                                               "${result.name}",
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
+                                                  // fontWeight: FontWeight.bold,
+                                                  ),
                                             ),
                                             Text(
                                               formatRange(result.range ?? ""),

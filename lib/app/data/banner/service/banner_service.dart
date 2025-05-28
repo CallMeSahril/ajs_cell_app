@@ -24,6 +24,7 @@ class BannerService {
       final List<BannerEntities> list =
           List<BannerEntities>.from(response.data['data']
               .map((x) => BannerEntities.fromJson(x)));
+        print("Response Iklan: ${list}");
 
       return Right(list);
     } catch (e) {
@@ -45,6 +46,8 @@ Future<Either<Failure, BannerEntities>> getIklan() async {
     }
 
     final iklan = BannerEntities.fromJson(response.data['data']);
+        print("Response Iklan: ${iklan}");
+
     return Right(iklan);
   } catch (e) {
     return Left(ServerFailure(e.toString()));
