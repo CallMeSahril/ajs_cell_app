@@ -45,7 +45,7 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
     return Scaffold(
       backgroundColor: const Color(0xffFFFFFF),
       appBar: AppBar(
-        title: const Text('Riwayat Pesanan A'),
+        title: const Text('Riwayat Pesanan'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -136,8 +136,10 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
                           unreadCount: 0,
                           onTap: () {
                             if (order.status == "pending") {
-                               Get.to(
-                        () => WebviewPembayaranPage(url:  order.paymentUrl!,back: true,));
+                              Get.to(() => WebviewPembayaranPage(
+                                    url: order.paymentUrl!,
+                                    back: true,
+                                  ));
                               // Get.to(() => PembayaranPay(
                               //   paymentUrl: order.paymentUrl,
                               //       address: AddressEntities(
