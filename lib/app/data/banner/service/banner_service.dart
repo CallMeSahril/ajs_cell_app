@@ -21,37 +21,36 @@ class BannerService {
         return Left(ServerFailure("Data tidak ditemukan"));
       }
 
-      final List<BannerEntities> list =
-          List<BannerEntities>.from(response.data['data']
-              .map((x) => BannerEntities.fromJson(x)));
-        print("Response Iklan: ${list}");
+      final List<BannerEntities> list = List<BannerEntities>.from(
+          response.data['data'].map((x) => BannerEntities.fromJson(x)));
+      print("Response Iklan: ${list}");
 
       return Right(list);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
   }
-Future<Either<Failure, BannerEntities>> getIklan() async {
-  final isConnected = await NetworkChecker.isConnected();
-  if (!isConnected) return Left(NoConnectionFailure());
 
-  final isSlow = await NetworkChecker.isConnectionSlow();
-  if (isSlow) return Left(SlowConnectionFailure());
+  Future<Either<Failure, BannerEntities>> getIklan() async {
+    final isConnected = await NetworkChecker.isConnected();
+    if (!isConnected) return Left(NoConnectionFailure());
 
-  try {
-    final response = await _apiHelper.get('/iklan');
+    final isSlow = await NetworkChecker.isConnectionSlow();
+    if (isSlow) return Left(SlowConnectionFailure());
 
-    if (response.data == null || response.data['data'] == null) {
-      return Left(ServerFailure("Data tidak ditemukan"));
+    try {
+      final response = await _apiHelper.get('/iklan');
+
+      if (response.data == null || response.data['data'] == null) {
+        return Left(ServerFailure("Data tidak ditemukan"));
+      }
+
+      final iklan = BannerEntities.fromJson(response.data['data']);
+      print("Response Iklan: ${iklan}");
+
+      return Right(iklan);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
     }
-
-    final iklan = BannerEntities.fromJson(response.data['data']);
-        print("Response Iklan: ${iklan}");
-
-    return Right(iklan);
-  } catch (e) {
-    return Left(ServerFailure(e.toString()));
   }
-}
-
 }

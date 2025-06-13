@@ -2,18 +2,18 @@ import 'package:ajs_cell_app/app/domain/products/entities/product_entities.dart'
 import 'package:ajs_cell_app/app/domain/products/entities/product_type_entities.dart';
 
 class ProductsModel extends ProductEntities {
-  ProductsModel({
-    super.categoryId,
-    super.createdAt,
-    super.description,
-    super.id,
-    super.image,
-    super.name,
-    super.productTypes,
-    super.range,
-    super.stock,
-    super.updatedAt,
-  });
+  ProductsModel(
+      {super.categoryId,
+      super.createdAt,
+      super.description,
+      super.id,
+      super.image,
+      super.name,
+      super.productTypes,
+      super.range,
+      super.stock,
+      super.updatedAt,
+      super.discount});
   factory ProductsModel.fromJson(Map<String, dynamic> json) {
     return ProductsModel(
       id: json["id"],
@@ -32,7 +32,10 @@ class ProductsModel extends ProductEntities {
       productTypes: json["product_types"] == null
           ? []
           : List<ProductType>.from(
-              json["product_types"]!.map((x) => ProductType.fromJson(x))),
+              json["product_types"]!.map((x) => ProductType.fromJson(x)),
+            ),
+      discount: List<Discount>.from(
+          json["discount"].map((x) => Discount.fromJson(x))),
     );
   }
 
@@ -47,6 +50,7 @@ class ProductsModel extends ProductEntities {
         productTypes: productTypes,
         range: range,
         stock: stock,
+        discount: discount,
         updatedAt: updatedAt);
   }
 }

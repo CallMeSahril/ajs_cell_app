@@ -52,7 +52,7 @@ class HistoryEntities {
 
   factory HistoryEntities.fromJson(Map<String, dynamic> json) =>
       HistoryEntities(
-        totalAmount: json["total_amount"],
+        totalAmount: json["total_amount"].toString(),
         status: json["status"],
         completedAt: json["completed_at"] == null
             ? null

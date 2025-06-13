@@ -11,7 +11,7 @@ class ProductEntities {
   final DateTime? updatedAt;
   final String? range;
   final List<ProductType>? productTypes;
-
+  final List<Discount>? discount;
   ProductEntities({
     this.id,
     this.name,
@@ -23,6 +23,7 @@ class ProductEntities {
     this.updatedAt,
     this.range,
     this.productTypes,
+    this.discount,
   });
   factory ProductEntities.fromJson(Map<String, dynamic> json) =>
       ProductEntities(
@@ -43,5 +44,43 @@ class ProductEntities {
             ? []
             : List<ProductType>.from(
                 json["product_types"]!.map((x) => ProductType.fromJson(x))),
+        discount: List<Discount>.from(
+            json["discount"].map((x) => Discount.fromJson(x))),
       );
+}
+
+class Discount {
+  int id;
+  String productId;
+  String potonganDiskon;
+  String status;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  Discount({
+    required this.id,
+    required this.productId,
+    required this.potonganDiskon,
+    required this.status,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory Discount.fromJson(Map<String, dynamic> json) => Discount(
+        id: json["id"],
+        productId: json["product_id"],
+        potonganDiskon: json["potongan_diskon"],
+        status: json["status"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "product_id": productId,
+        "potongan_diskon": potonganDiskon,
+        "status": status,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
 }
