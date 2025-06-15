@@ -34,6 +34,13 @@ class _KeranjangPageState extends State<KeranjangPage> {
     } finally {}
   }
 
+  String formatHargaSetelahDiskon(String harga, int diskon) {
+    final doubleHarga = double.tryParse(harga) ?? 0;
+    final potongan = doubleHarga * diskon / 100;
+    final hargaAkhir = doubleHarga - potongan;
+    return formatCurrency(hargaAkhir.toStringAsFixed(0));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +90,19 @@ class _KeranjangPageState extends State<KeranjangPage> {
                       itemCount: allCart.length,
                       itemBuilder: (context, index) {
                         final result = allCart[index];
+                        final diskonPersen =
+                            (result.product?.discount != null &&
+                                    result.product!.discount!.isNotEmpty)
+                                ? int.tryParse(result.product!.discount!.first
+                                        .potonganDiskon) ??
+                                    0
+                                : 0;
+
+                        final hargaAsli =
+                            formatCurrency(result.productCart?.price ?? '');
+                        final hargaDiskon = formatHargaSetelahDiskon(
+                            result.productCart?.price ?? '0', diskonPersen);
+
                         return Container(
                           margin: EdgeInsets.symmetric(vertical: 10),
                           color: Color(0xffDBDADA),
@@ -127,8 +147,39 @@ class _KeranjangPageState extends State<KeranjangPage> {
                                   children: [
                                     Text(
                                         "${result.product?.name?.toUpperCase()} - ${result.productCart?.type?.toUpperCase()}"),
-                                    Text(formatCurrency(
-                                        result.productCart?.price ?? '')),
+                                    // Text(formatCurrency(
+                                    //     result.productCart?.price ?? '')),
+                                    diskonPersen > 0
+                                        ? Column(
+                                            children: [
+                                              Text(
+                                                hargaAsli,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.red,
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                ),
+                                              ),
+                                              Text(
+                                                hargaDiskon,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Text(
+                                            hargaAsli,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+
                                     Container(
                                       decoration: BoxDecoration(
                                           color: Color(0xff0F6CBD),

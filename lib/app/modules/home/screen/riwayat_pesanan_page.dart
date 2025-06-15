@@ -32,6 +32,11 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
   void initState() {
     super.initState();
     tabController = TabController(length: tabs.length, vsync: this);
+    tabController.addListener(() {
+      if (!tabController.indexIsChanging) {
+        setState(() {}); // trigger rebuild dan future baru
+      }
+    });
   }
 
   @override
@@ -57,106 +62,117 @@ class _RiwayatPesananPageState extends State<RiwayatPesananPage>
           tabs: tabs.map((e) => Tab(text: e)).toList(),
         ),
       ),
-      body: TabBarView(
-        controller: tabController,
-        children: List.generate(tabs.length, (i) {
-          return i == 3
-              ? FutureBuilder<List<HistoryEntities>>(
-                  future: controller.getHistory(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text("Tidak ada pesanan selesai"));
-                    }
-
-                    final data = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        final order = data[index];
-                        return BuildCardPesan(
-                          totalAmount: order.totalAmount ?? "0",
-
-                          image: "",
-                          name: order.name ?? "Pelanggan",
-                          orderId: "Riwayat", // bisa diganti kalau ada ID-nya
-                          message:
-                              "Status: ${order.status ?? 'Tidak diketahui'}",
-                          time: order.completedAt != null
-                              ? "${order.completedAt!.hour}:${order.completedAt!.minute.toString().padLeft(2, '0')}"
-                              : "-",
-                          tanggal: order.completedAt != null
-                              ? "${order.completedAt!.day.toString().padLeft(2, '0')}-${order.completedAt!.month.toString().padLeft(2, '0')}-${order.completedAt!.year}"
-                              : "-",
-                          unreadCount: 0,
-                        );
-                      },
-                    );
-                  },
-                )
-              : FutureBuilder<List<OrderStatusEntities>>(
-                  future: controller.getPending(status: statusList[i]),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
-                          child: Text(
-                              "Tidak ada pesanan ${tabs[i].toLowerCase()}"));
-                    }
-
-                    final data = snapshot.data!;
-                    data.sort((a, b) {
-                      if (a.createdAt == null && b.createdAt == null) return 0;
-                      if (a.createdAt == null) return 1;
-                      if (b.createdAt == null) return -1;
-                      return b.createdAt!.compareTo(a.createdAt!);
-                    });
-                    return ListView.builder(
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        final order = data[index];
-                        return BuildCardPesan(
-                          totalAmount: order.totalAmount ?? "0",
-                          image: "",
-                          name: "Customer",
-                          orderId: order.merchantOrderId ?? "No ID",
-                          message:
-                              "Status: ${order.status ?? 'Tidak diketahui'}",
-                          time: order.createdAt != null
-                              ? "${order.createdAt!.hour}:${order.createdAt!.minute.toString().padLeft(2, '0')}"
-                              : "-",
-                          tanggal: order.createdAt != null
-                              ? "${order.createdAt!.day.toString().padLeft(2, '0')}-${order.createdAt!.month.toString().padLeft(2, '0')}-${order.createdAt!.year}"
-                              : "-",
-                          unreadCount: 0,
-                          onTap: () {
-                            if (order.status == "pending") {
-                              Get.to(() => WebviewPembayaranPage(
-                                    url: order.paymentUrl!,
-                                    back: true,
-                                  ));
-                              // Get.to(() => PembayaranPay(
-                              //   paymentUrl: order.paymentUrl,
-                              //       address: AddressEntities(
-                              //           id: int.parse(order.addressId ?? '0') ), // pastikan ini ada di model
-                              //       cartIds: [], // opsional jika perlu
-                              //       merchantOrderId:
-                              //           order.merchantOrderId ?? '',
-                              //     ));
-                            }
-                          },
-                        );
-                      },
-                    );
-                  },
-                );
-        }),
+      body: IndexedStack(
+        index: tabController.index,
+        children: List.generate(
+          tabs.length,
+          (i) => buildTabContent(i),)
       ),
+    );
+  }
+
+  Widget buildTabContent(int i) {
+    final status = statusList[i];
+
+    // Log hanya untuk tab yang sedang aktif
+    if (i == tabController.index) {
+      print("Status aktif: $status");
+    }
+
+    if (status == OrderStatus.done) {
+      return FutureBuilder<List<HistoryEntities>>(
+        future: controller.getHistory().timeout(const Duration(seconds: 10)),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text("Gagal memuat data. Coba lagi."));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("Tidak ada pesanan selesai"));
+          }
+
+          final data = snapshot.data!;
+          return ListView.builder(
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              final order = data[index];
+              return BuildCardPesan(
+                totalAmount: order.totalAmount ?? "0",
+                image: "",
+                name: order.name ?? "Pelanggan",
+                orderId: "Riwayat",
+                message: "Status: ${order.status ?? 'Tidak diketahui'}",
+                time: order.completedAt != null
+                    ? "${order.completedAt!.hour}:${order.completedAt!.minute.toString().padLeft(2, '0')}"
+                    : "-",
+                tanggal: order.completedAt != null
+                    ? "${order.completedAt!.day.toString().padLeft(2, '0')}-${order.completedAt!.month.toString().padLeft(2, '0')}-${order.completedAt!.year}"
+                    : "-",
+                unreadCount: 0,
+              );
+            },
+          );
+        },
+      );
+    }
+
+    // Tab selain status == done
+    return FutureBuilder<List<OrderStatusEntities>>(
+      future: controller
+          .getPending(status: status)
+          .timeout(const Duration(seconds: 10)),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(
+              child: Text("Gagal memuat data ${tabs[i].toLowerCase()}"));
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+              child: Text("Tidak ada pesanan ${tabs[i].toLowerCase()}"));
+        }
+
+        final data = snapshot.data!;
+        data.sort((a, b) {
+          if (a.createdAt == null && b.createdAt == null) return 0;
+          if (a.createdAt == null) return 1;
+          if (b.createdAt == null) return -1;
+          return b.createdAt!.compareTo(a.createdAt!);
+        });
+
+        return ListView.builder(
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            final order = data[index];
+            return BuildCardPesan(
+              totalAmount: order.totalAmount ?? "0",
+              image: "",
+              name:  "AJS Cell",
+              orderId: order.merchantOrderId ?? "No ID",
+              message: "Status: ${order.status ?? 'Tidak diketahui'}",
+              time: order.createdAt != null
+                  ? "${order.createdAt!.hour}:${order.createdAt!.minute.toString().padLeft(2, '0')}"
+                  : "-",
+              tanggal: order.createdAt != null
+                  ? "${order.createdAt!.day.toString().padLeft(2, '0')}-${order.createdAt!.month.toString().padLeft(2, '0')}-${order.createdAt!.year}"
+                  : "-",
+              unreadCount: 0,
+              onTap: () {
+                if (order.status == "pending") {
+                  Get.to(() => WebviewPembayaranPage(
+                        url: order.paymentUrl!,
+                        back: true,
+                      ));
+                }
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

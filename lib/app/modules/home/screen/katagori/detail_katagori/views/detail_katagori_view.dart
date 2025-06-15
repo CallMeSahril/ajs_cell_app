@@ -17,6 +17,12 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
   final BerandaController controller = Get.find<BerandaController>();
   ProductEntities produk = ProductEntities();
   bool isLoading = false;
+  String formatHargaDiskon(String harga, int potongan) {
+    final hargaDouble = double.tryParse(harga) ?? 0;
+    final diskon = hargaDouble * potongan / 100;
+    final hargaAkhir = hargaDouble - diskon;
+    return formatCurrency(hargaAkhir.toStringAsFixed(0));
+  }
 
   int jumlah = 0;
   int productTypeId = 0;
@@ -77,13 +83,24 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
                   ),
                   Text("Deskripsi Katagori"),
                   Container(
-                    height: 70,
+                    height: 100,
                     width: double.infinity,
                     child: ListView.builder(
                         itemCount: produk.productTypes?.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           final data = produk.productTypes?[index];
+                          final int diskonPersen = (produk.discount != null &&
+                                  produk.discount!.isNotEmpty)
+                              ? int.tryParse(
+                                      produk.discount!.first.potonganDiskon) ??
+                                  0
+                              : 0;
+                          final harga = data?.price ?? "0";
+                          final hargaSetelahDiskon =
+                              formatHargaDiskon(harga, diskonPersen);
+                          final hargaAsli = formatCurrency(harga);
+
                           return GestureDetector(
                             onTap: () {
                               setState(() {
@@ -96,13 +113,46 @@ class _DetailKatagoriViewState extends State<DetailKatagoriView> {
                                   ? Colors.blue
                                   : Colors.grey[300],
                               margin: const EdgeInsets.all(10),
-                              child: Center(
-                                child: Text(
-                                  data?.type ?? '',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    data?.type ?? '',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  if (diskonPersen > 0) ...[
+                                    Text(
+                                      hargaAsli,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        decoration: TextDecoration.lineThrough,
+                                        color: Colors.red[200],
+                                      ),
+                                    ),
+                                    Text(
+                                      hargaSetelahDiskon,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: productTypeId == data?.id
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ] else
+                                    Text(
+                                      hargaAsli,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: productTypeId == data?.id
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                           );

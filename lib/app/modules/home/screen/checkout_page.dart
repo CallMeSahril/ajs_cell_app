@@ -37,8 +37,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void initState() {
     initChekout();
     totalProduk = widget.selectedCarts.fold(0, (sum, item) {
-      final price = double.tryParse(item.productCart?.price ?? '0') ?? 0;
-      return sum + (price * item.quantity!).toInt();
+      final hargaAsli = double.tryParse(item.productCart?.price ?? '0') ?? 0;
+      final diskonPersen =
+          (item.product?.discount != null && item.product!.discount!.isNotEmpty)
+              ? int.tryParse(item.product!.discount!.first.potonganDiskon) ?? 0
+              : 0;
+
+      final hargaSetelahDiskon = diskonPersen > 0
+          ? hitungHargaDiskon(item.productCart?.price ?? '0', diskonPersen)
+          : hargaAsli;
+
+      return sum + (hargaSetelahDiskon * item.quantity!).toInt();
     });
 
     grandTotal = totalProduk;
@@ -130,44 +139,51 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-Future<void> submitOrderToServer(
-    BuildContext context, List<int> cartIds) async {
-  try {
-    final Map<String, dynamic> payload = {
-      "cart_ids": cartIds,
-      "method_pembayaran": selectedPaymentMethod,
-      "ongkir": selectedOngkir!.value,
-      "address_id": selectedAddress!.id,
-    };
+  Future<void> submitOrderToServer(
+      BuildContext context, List<int> cartIds) async {
+    try {
+      final Map<String, dynamic> payload = {
+        "cart_ids": cartIds,
+        "method_pembayaran": selectedPaymentMethod,
+        "ongkir": selectedOngkir!.value,
+        "address_id": selectedAddress!.id,
+      };
 
-    ApiHelper apiHelper = ApiHelper();
-    final response = await apiHelper.post('/orders', data: payload);
-    print(response.data);
+      ApiHelper apiHelper = ApiHelper();
+      final response = await apiHelper.post('/orders', data: payload);
+      print(response.data);
 
-    if (response.statusCode == 200) {
-      final merchantOrderId = response.data['meta']?['message']?['merchantOrderId'];
-      if (merchantOrderId != null) {
-        Get.snackbar("Berhasil", "Pesanan berhasil dikirim");
-              Get.offAll(
-                        () => WebviewPembayaranPage(url: response.data['meta']?['message']['paymentUrl']));
-        // Get.to(() => PembayaranPay(
-        //   paymentUrl: response.data['meta']?['message']['paymentUrl'],
-        //       address: selectedAddress!,
-        //       cartIds: cartIds,
-        //       merchantOrderId: merchantOrderId.toString(),
-        //     ));
+      if (response.statusCode == 200) {
+        final merchantOrderId =
+            response.data['meta']?['message']?['merchantOrderId'];
+        if (merchantOrderId != null) {
+          Get.snackbar("Berhasil", "Pesanan berhasil dikirim");
+          Get.offAll(() => WebviewPembayaranPage(
+              url: response.data['meta']?['message']['paymentUrl']));
+          // Get.to(() => PembayaranPay(
+          //   paymentUrl: response.data['meta']?['message']['paymentUrl'],
+          //       address: selectedAddress!,
+          //       cartIds: cartIds,
+          //       merchantOrderId: merchantOrderId.toString(),
+          //     ));
+        } else {
+          Get.snackbar("Gagal", "Merchant Order ID tidak ditemukan");
+        }
       } else {
-        Get.snackbar("Gagal", "Merchant Order ID tidak ditemukan");
+        Get.snackbar(
+            "Gagal", "Gagal membuat pesanan: ${response.statusMessage}");
       }
-    } else {
-      Get.snackbar("Gagal", "Gagal membuat pesanan: ${response.statusMessage}");
+    } catch (e) {
+      Get.snackbar("Error", "Terjadi kesalahan saat submit: $e");
     }
-  } catch (e) {
-    Get.snackbar("Error", "Terjadi kesalahan saat submit: $e");
   }
-}
 
   int selectedAddressId = 0;
+  double hitungHargaDiskon(String harga, int potongan) {
+    final doubleHarga = double.tryParse(harga) ?? 0;
+    final diskon = doubleHarga * potongan / 100;
+    return doubleHarga - diskon;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,11 +218,22 @@ Future<void> submitOrderToServer(
                     itemCount: widget.selectedCarts.length,
                     itemBuilder: (context, index) {
                       final result = widget.selectedCarts[index];
-                      final price =
+
+                      final diskonPersen = (result.product?.discount != null &&
+                              result.product!.discount!.isNotEmpty)
+                          ? int.tryParse(result
+                                  .product!.discount!.first.potonganDiskon) ??
+                              0
+                          : 0;
+
+                      final hargaAsli =
                           double.tryParse(result.productCart?.price ?? '0') ??
                               0;
-                      int total = (price * result.quantity!).toInt();
-
+                      final hargaDiskon = diskonPersen > 0
+                          ? hitungHargaDiskon(
+                              result.productCart?.price ?? '0', diskonPersen)
+                          : hargaAsli;
+                      final hargaTotal = hargaDiskon * result.quantity!;
                       return Row(
                         spacing: 20,
                         children: [
@@ -224,8 +251,36 @@ Future<void> submitOrderToServer(
                               children: [
                                 Text(
                                     "${result.product?.name?.capitalize} ${result.productCart?.type?.capitalize}"),
-                                Text(
-                                    "Deskripsi : ${result.product?.description} ${formatCurrency(total.toString())} ")
+                                diskonPersen > 0
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Harga: ${formatCurrency(hargaAsli.toString())}",
+                                            style: TextStyle(
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                                color: Colors.red,
+                                                fontSize: 12),
+                                          ),
+                                          Text(
+                                            "Diskon $diskonPersen%: ${formatCurrency(hargaDiskon.toString())}",
+                                            style: TextStyle(
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "Subtotal: ${formatCurrency(hargaTotal.toString())}",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600),
+                                          )
+                                        ],
+                                      )
+                                    : Text(
+                                        "Subtotal: ${formatCurrency(hargaTotal.toString())}"),
+                                // Text(
+                                //     "Deskripsi : ${result.product?.description} ${formatCurrency(total.toString())} ")
                               ],
                             ),
                           )

@@ -37,9 +37,12 @@ class RiwayatController extends GetxController {
           SlowConnectionFailure() => 'Koneksi internet lambat',
           _ => failure.message ?? 'Terjadi kesalahan saat mengambil data',
         };
+        print("Data Riwayat: ${message}");
+
         return [];
       },
       (data) async {
+        print("Data Riwayat: ${data.length}");
         return data;
       },
     );
